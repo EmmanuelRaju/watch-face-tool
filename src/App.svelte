@@ -2,10 +2,13 @@
 import { fabric } from 'fabric';
 import { onMount } from 'svelte';
 
-let canvas,imagesData,mode='add'
+let canvas:any,imagesData:any,mode:string='add'
 
-let width,height,top,left
-let objects = ['background','time','date','temperature','bpm']
+let width:number,height:number,top:number,left:number
+
+let objects:string[] = ['background','time','date','temperature','bpm']
+
+let dimensions:string[] = ['width','height','top','left']
 
 onMount(()=>{
   canvas = new fabric.Canvas("canvas")
@@ -66,10 +69,13 @@ onMount(()=>{
       } 
     }
 ]
+
+  //For monitoring selection of objects
   canvas.on("mouse:up", (opt) => {
     setFormValues()
   });
   
+  //For zooming into objects on mouse wheel rotation 
   canvas.on("mouse:wheel", (opt) => {
     let delta = opt.e.deltaY;
     let zoom = canvas.getZoom();
@@ -82,21 +88,23 @@ onMount(()=>{
   });
 })
 
+//For setting dimensionForm values
 const setFormValues = () => {
-  let active = canvas.getActiveObject();
-        if (active) {
-          width = Math.ceil(active.width);
-          height = Math.ceil(active.height);
-          top = Math.ceil(active.top);
-          left = Math.ceil(active.left);
-        } else {
-          width = "";
-          height = "";
-          top = "";
-          left = "";
-        }
+  let activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      width = Math.ceil(activeObject.width);
+      height = Math.ceil(activeObject.height);
+      top = Math.ceil(activeObject.top);
+      left = Math.ceil(activeObject.left);
+    } else {
+      width = null;
+      height = null;
+      top = null;
+      left = null;
+    }
 }
 
+//For adding objects to canvas
 const addImage = (name) => {
   let image = imagesData.find(item=> item.id=== name)
 
@@ -104,9 +112,9 @@ const addImage = (name) => {
     img.set(image.position)
     canvas.add(img)
   });
-  // objects = objects  
 }
 
+//For editing object values and setting active object
 const editObject = (name) => {
   let object
   canvas.forEachObject((obj)=>{
@@ -117,9 +125,10 @@ const editObject = (name) => {
     canvas.setActiveObject(object)
     canvas.renderAll()
     setFormValues()   
-  }
-  
+  }  
 }
+
+//For finding object existence
 const findObject = (name:string):boolean => {
   if (canvas){
     let object
@@ -130,44 +139,47 @@ const findObject = (name:string):boolean => {
       return true
     }
   }
-
   return false
-
 }
 
+//For binding input values to active object
 const changeValue = (params) => {
-        switch (params) {
-          case "width":
-            canvas.getActiveObject().set("width", Number(width));
-            break;
-          case "height":
-            canvas.getActiveObject().set("height", Number(height));
-            break;
-          case "top":
-            canvas.getActiveObject().set("top", Number(top));
-            break;
-          case "left":
-            canvas.getActiveObject().set("left", Number(left));
-            break;
-          default:
-            break;
-        }
-        canvas.requestRenderAll();
-      };
+  switch (params) {
+    case "width":
+      canvas.getActiveObject().set("width", Number(width));
+      break;
+    case "height":
+      canvas.getActiveObject().set("height", Number(height));
+      break;
+    case "top":
+      canvas.getActiveObject().set("top", Number(top));
+      break;
+    case "left":
+      canvas.getActiveObject().set("left", Number(left));
+      break;
+    default:
+      break;
+  }
+  canvas.requestRenderAll();
+};
 </script>
 
-<h1 class="text-6xl text-center font-semibold uppercase mt-5">fabric js poc</h1>
+<h1 class="text-6xl text-center font-semibold uppercase mt-5">watch face tool poc</h1>
 
-<div class="bg-[url('watch-face.png')] h-[364px] w-[327px] bg-cover mx-auto mt-10 pt-10 pl-9">
+<div style="background-image:url('watch-face.png')" class="h-[364px] w-[327px] bg-cover mx-auto mt-10 pt-10 pl-9">
   <canvas id="canvas" width="240" height="280"/>
 </div>
 
 <section>
   <div class="mt-10 border border-dashed rounded-xl p-5">  
     <div class="flex gap-5 justify-center">
-      <button class="px-4 py-2 rounded-xl text-lg font-medium uppercase border border-transparent {mode==='add'? 'bg-white text-black' : ''} hover:border-white" on:click={()=>mode ='add'}>add</button>
+      <button class="px-4 py-2 rounded-xl text-lg font-medium uppercase border border-transparent {mode==='add'? 'bg-white text-black' : ''} hover:border-white" on:click={()=>mode ='add'}>
+        add
+      </button>
       <div class="w-[2px] bg-white"/>
-      <button class="px-4 py-2 rounded-xl text-lg font-medium uppercase border border-transparent {mode==='edit'? 'bg-white text-black' : ''} hover:border-white" on:click={()=>mode ='edit'}>edit</button>
+      <button class="px-4 py-2 rounded-xl text-lg font-medium uppercase border border-transparent {mode==='edit'? 'bg-white text-black' : ''} hover:border-white" on:click={()=>mode ='edit'}>
+        edit
+      </button>
     </div>
     <div class="flex gap-5 mt-7 justify-center flex-wrap">
       {#each objects as object (object)}
@@ -186,56 +198,19 @@ const changeValue = (params) => {
   {#if mode === 'edit'}  
     <!-- Form for viewing/editing values -->
     <form id="dimensionForm" class="mt-10 flex gap-3 h-max flex-wrap border border-dashed rounded-xl p-5 justify-center">
-      <div>
-        <label for="width"> Width: </label>
+      {#each dimensions as dimension (dimension)}  
+      <div class="flex flex-col gap-2">
+        <label for={dimension} class="capitalize"> {dimension}: </label>
         <input
           type="number"
-          name="width"
-          id="width"
+          name={dimension}
+          id={dimension}
           class="border rounded-lg p-2"
           bind:value={width}
-          on:input={()=>changeValue('width')}
+          on:input={()=>changeValue(dimension)}
         />
       </div>
-      <div>
-        <label for="height"> Height: </label>
-        <input
-          type="number"
-          name="height"
-          id="height"
-          class="border rounded-lg p-2"
-          bind:value={height}
-          on:input={()=>changeValue('height')}
-        />
-      </div>
-      <div>
-        <label for="top"> Top: </label>
-        <input
-          type="number"
-          name="top"
-          id="top"
-          class="border rounded-lg p-2"
-          bind:value={top}
-          on:input={()=>changeValue('top')}
-        />
-      </div>
-      <div>
-        <label for="left"> Left: </label>
-        <input
-          type="number"
-          name="left"
-          id="left"
-          class="border rounded-lg p-2"
-          bind:value={left}
-          on:input={()=>changeValue('left')}
-        />
-      </div>
+      {/each}
     </form>
   {/if}
 </section>
-
-<style>
-  form div {
-    @apply flex flex-col gap-2
-  }
-</style>
