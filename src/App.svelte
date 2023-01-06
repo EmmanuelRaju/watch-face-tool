@@ -8,8 +8,6 @@ let width:number,height:number,top:number,left:number
 
 let objects:string[] = ['background','time','date','temperature','bpm']
 
-let dimensions:string[] = ['width','height','top','left']
-
 onMount(()=>{
   canvas = new fabric.Canvas("canvas")
   imagesData = [
@@ -198,19 +196,50 @@ const changeValue = (params) => {
   {#if mode === 'edit'}  
     <!-- Form for viewing/editing values -->
     <form id="dimensionForm" class="mt-10 flex gap-3 h-max flex-wrap border border-dashed rounded-xl p-5 justify-center">
-      {#each dimensions as dimension (dimension)}  
       <div class="flex flex-col gap-2">
-        <label for={dimension} class="capitalize"> {dimension}: </label>
+        <label for={"width"} class="capitalize"> width: </label>
         <input
           type="number"
-          name={dimension}
-          id={dimension}
+          name={"width"}
+          id={"width"}
           class="border rounded-lg p-2"
           bind:value={width}
-          on:input={()=>changeValue(dimension)}
+          on:input={()=>changeValue("width")}
         />
       </div>
-      {/each}
+      <div class="flex flex-col gap-2">
+        <label for="height" class="capitalize"> height: </label>
+        <input
+          type="number"
+          name="height"
+          id="height"
+          class="border rounded-lg p-2"
+          bind:value={height}
+          on:input={()=>changeValue("height")}
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="top" class="capitalize"> top: </label>
+        <input
+          type="number"
+          name="top"
+          id="top"
+          class="border rounded-lg p-2"
+          bind:value={top}
+          on:input={()=>changeValue("top")}
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="left" class="capitalize"> left: </label>
+        <input
+          type="number"
+          name="left"
+          id="left"
+          class="border rounded-lg p-2"
+          bind:value={left}
+          on:input={()=>changeValue("left")}
+        />
+      </div>
     </form>
   {/if}
 </section>
