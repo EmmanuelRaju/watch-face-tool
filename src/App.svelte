@@ -182,11 +182,11 @@ const changeValue = (params) => {
     <div class="flex gap-5 mt-7 justify-center flex-wrap">
       {#each objects as object (object)}
         {#if mode === 'add'}  
-          <button class="px-4 py-2 rounded-xl text-lg font-medium capitalize border border-transparent hover:border-white {findObject(object)? 'bg-slate-800':''} focus:bg-slate-800" on:click|once={()=>{objects=objects;addImage(object)}}>
+          <button class="px-4 py-2 rounded-xl text-lg font-medium capitalize border border-transparent hover:border-white {findObject(object)? 'bg-neutral-400':''} focus:bg-neutral-400" on:click|once={()=>{objects=objects;addImage(object)}} disabled={findObject(object)}>
             {object}
           </button>
         {:else if mode === 'edit'}
-          <button class="px-4 py-2 rounded-xl border text-lg font-medium capitalize hover:bg-slate-800 disabled:opacity-20 disabled:border-none disabled:hover:bg-transparent" on:click={()=>editObject(object)} disabled={!findObject(object)}>
+          <button class="px-4 py-2 rounded-xl border text-lg font-medium capitalize hover:bg-neutral-400 disabled:opacity-20 disabled:border-none disabled:hover:bg-transparent" on:click={()=>editObject(object)} disabled={!findObject(object)}>
             {object}
           </button>
         {/if}
@@ -202,7 +202,7 @@ const changeValue = (params) => {
           type="number"
           name={"width"}
           id={"width"}
-          class="border rounded-lg p-2"
+          class="border rounded-lg p-2 bg-transparent"
           bind:value={width}
           on:input={()=>changeValue("width")}
         />
@@ -213,7 +213,7 @@ const changeValue = (params) => {
           type="number"
           name="height"
           id="height"
-          class="border rounded-lg p-2"
+          class="border rounded-lg p-2 bg-transparent"
           bind:value={height}
           on:input={()=>changeValue("height")}
         />
@@ -224,7 +224,7 @@ const changeValue = (params) => {
           type="number"
           name="top"
           id="top"
-          class="border rounded-lg p-2"
+          class="border rounded-lg p-2 bg-transparent"
           bind:value={top}
           on:input={()=>changeValue("top")}
         />
@@ -235,7 +235,7 @@ const changeValue = (params) => {
           type="number"
           name="left"
           id="left"
-          class="border rounded-lg p-2"
+          class="border rounded-lg p-2 bg-transparent"
           bind:value={left}
           on:input={()=>changeValue("left")}
         />
