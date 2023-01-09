@@ -160,6 +160,20 @@ const changeValue = (params) => {
   }
   canvas.requestRenderAll();
 };
+
+let fileinput;
+	
+const onFileSelected =(e)=>{
+  let image = e.target.files[0];
+  let reader = new FileReader();
+  reader.readAsDataURL(image);
+  reader.onload = e => {
+    fabric.Image.fromURL(e.target.result, (img)=>{
+      img.set({id:'other'})
+      canvas.add(img)
+    });
+  };
+}
 </script>
 
 <h1 class="text-6xl text-center font-semibold uppercase mt-5">watch face tool poc</h1>
@@ -182,15 +196,21 @@ const changeValue = (params) => {
     <div class="flex gap-5 mt-7 justify-center flex-wrap">
       {#each objects as object (object)}
         {#if mode === 'add'}  
-          <button class="px-4 py-2 rounded-xl text-lg font-medium capitalize border border-transparent hover:border-white {findObject(object)? 'bg-neutral-400':''} focus:bg-neutral-400" on:click|once={()=>{objects=objects;addImage(object)}} disabled={findObject(object)}>
+          <button class="px-4 py-2 rounded-xl text-lg font-medium capitalize border border-transparent hover:border-white {findObject(object)? 'bg-blue-50 text-black':''} focus:bg-blue-50 focus:text-black" on:click|once={()=>{objects=objects;addImage(object)}} disabled={findObject(object)}>
             {object}
           </button>
         {:else if mode === 'edit'}
-          <button class="px-4 py-2 rounded-xl border text-lg font-medium capitalize hover:bg-neutral-400 disabled:opacity-20 disabled:border-none disabled:hover:bg-transparent" on:click={()=>editObject(object)} disabled={!findObject(object)}>
+          <button class="px-4 py-2 rounded-xl border text-lg font-medium capitalize hover:bg-blue-50 hover:text-black disabled:opacity-20 disabled:border-none disabled:hover:bg-transparent disabled:hover:text-current" on:click={()=>editObject(object)} disabled={!findObject(object)}>
             {object}
           </button>
         {/if}
       {/each}
+      {#if mode === 'add'}
+      <button class="px-4 py-2 rounded-xl text-lg font-medium capitalize border border-transparent border-white" on:click={()=>{fileinput.click()}}>
+        other
+      </button>
+      <input class="hidden" type="file" accept=".jpg, .jpeg, .png" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
+      {/if}
     </div>
   </div>
   {#if mode === 'edit'}  
